@@ -1,0 +1,34 @@
+- hosts: localhost
+
+  vars:
+    USERNAME: "{{ lookup('ansible.builtin.env', 'USR') or ansible_user_id }}"
+    HOME_DIR: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    DOTFILES_DIR: "{{ lookup('ansible.builtin.env', 'HOME') }}/.dotfiles"
+    github_username: "husseyexplores"
+    id_rsa: "id_ed25519"
+    SSH_TARGET_FILE: ".ssh/{{ id_rsa }}"
+    SSH_DEST_FILE: "{{ lookup('ansible.builtin.env', 'HOME') }}/.ssh/{{ id_rsa }}"
+
+  pre_tasks:
+    - name: pre-run | update package cache (debian)
+      become: true
+      apt:
+        force_apt_get: true
+        update_cache: true
+        state: present
+      tags:
+        - install
+        - core
+
+  tasks:
+    - include: tasks/ssh.yml
+    - include: tasks/git.yml
+    - include: tasks/core.yml
+    - include: tasks/zsh.yml
+    - include: tasks/dotfiles.yml
+    - include: tasks/go.yml
+    - include: tasks/node.yml
+    - include: tasks/nvim.yml
+    - include: tasks/browsers.yml
+    - include: tasks/vscode.yml
+    - include: tasks/productivity.yml

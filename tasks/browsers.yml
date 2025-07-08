@@ -1,0 +1,79 @@
+# Brave Browser
+# ----------------------------------------------------------------------------
+
+- name: required libraries for Brave Brower
+  become: true
+  apt:
+    name: ['curl', 'apt-transport-https']
+  tags:
+    - brave-browser
+    - browsers
+    - install
+
+- name: Brave Browser archive-keyring.gpg download
+  become: true
+  shell: curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+  creates: /usr/share/keyrings/brave-browser-archive-keyring.gpg
+  tags:
+    - brave-browser
+    - browsers
+    - install
+
+- name: Brave Browser PPA setting (apt source)
+  become: true
+  shell: echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list
+  creates: /etc/apt/sources.list.d/brave-browser-release.list
+  tags:
+    - brave-browser
+    - browsers
+    - install
+
+- name: Brave Browser apt installation
+  become: true
+  apt:
+    update_cache: yes
+    name: brave-browser
+  tags:
+    - brave-browser
+    - browsers
+    - install
+
+# Google Chrome
+# ----------------------------------------------------------------------------
+
+- name: required libraries for Google Chrome
+  become: true
+  apt:
+    name: ['curl', 'apt-transport-https']
+  tags:
+    - google-chrome-stable
+    - browsers
+    - install
+
+- name: Google Chrome GPG signing key download
+  become: true
+  shell: curl -fSsL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | tee /usr/share/keyrings/google-chrome.gpg > /dev/null
+  creates: /usr/share/keyrings/google-chrome.gpg
+  tags:
+    - google-chrome-stable
+    - browsers
+    - install
+
+- name: Google Chrome PPA setting (apt source)
+  become: true
+  shell: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list
+  creates: /etc/apt/sources.list.d/google-chrome.list
+  tags:
+    - google-chrome-stable
+    - browsers
+    - install
+
+- name: Google Chrome apt installation
+  become: true
+  apt:
+    update_cache: yes
+    name: ['google-chrome-stable']
+  tags:
+    - google-chrome-stable
+    - browsers
+    - install

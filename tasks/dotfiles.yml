@@ -1,0 +1,41 @@
+- name: Installing stow
+  apt:
+    name: ['stow']
+  tags:
+    - install
+    - dotfiles
+    - stow
+
+- name: Cloning .dotfiles
+  ansible.builtin.git:
+    repo: 'git@github.com:{{ github_username }}/.dotfiles.git'
+    dest: "{{ DOTFILES_DIR }}"
+    recursive: yes
+    update: yes
+    accept_hostkey: yes
+    version: main
+  tags:
+    - install
+    - dotfiles
+    - stow
+
+- name: chmod {{ DOTFILES_DIR }}/stower.sh
+- shell: chmod +x {{ DOTFILES_DIR }}/stower.sh
+  tags:
+    - install
+    - dotfiles
+    - stow
+
+- name: chmod {{ DOTFILES_DIR }}/*.script.sh
+- shell: find {{ DOTFILES_DIR }} -name "*.script.sh" -exec chmod +x {} \; 2>/dev/null
+  tags:
+    - install
+    - dotfiles
+    - stow
+
+- name: Stow dotfiles
+  shell: cd {{ DOTFILES_DIR }} && ./stower.sh --use-defaults
+  tags:
+    - install
+    - dotfiles
+    - stow

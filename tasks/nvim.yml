@@ -1,0 +1,64 @@
+- name: Remove neovim
+  shell: rm -rf ~/cloned_softwares/neovim
+  tags:
+    - install
+    - nvim
+
+- name: Get Packer
+  ansible.builtin.git:
+    repo: 'https://github.com/wbthomason/packer.nvim'
+    dest: "{{ HOME_DIR }}/.local/share/nvim/site/pack/packer/start/packer.nvim"
+  tags:
+    - install
+    - nvim
+
+- name: Clone neovim
+  ansible.builtin.git:
+    repo: 'https://github.com/neovim/neovim.git'
+    dest: "{{ HOME_DIR }}/cloned_softwares/neovim"
+  tags:
+    - install
+    - nvim
+
+- name: Build neovim
+  shell: "cd {{ HOME_DIR }}/cloned_softwares/neovim && make -j 20"
+  tags:
+    - install
+    - nvim
+
+- name: Install neovim
+  become: true
+  shell: "cd {{ HOME_DIR }}/cloned_softwares/neovim && make install"
+  tags:
+    - install
+    - nvim
+
+- name: Install neovim
+  become: true
+  shell: "cd {{ HOME_DIR }}/cloned_softwares/neovim && make install"
+  tags:
+    - install
+    - nvim
+
+- name: Remove cloned neovim
+  shell: rm -rf ~/cloned_softwares/neovim
+  tags:
+    - install
+    - nvim
+
+- name: Luarocks
+  become: true
+  apt:
+    name: ['luarocks']
+  tags:
+    - install
+    - nvim
+    - lua
+
+- name: Luacheck
+  become: true
+  shell: luarocks install luacheck
+  tags:
+    - install
+    - nvim
+    - lua

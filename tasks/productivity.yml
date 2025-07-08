@@ -1,0 +1,7 @@
+- name: Install general productivity packages
+  become: true
+  apt:
+    name: ['flameshot', 'copyq', 'qbittorrent', 'ripgrep', 'fzf', 'tmux', 'resolvconf', 'wireguard', 'pass']
+  tags:
+    - productivity
+    - core
