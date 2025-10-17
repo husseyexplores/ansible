@@ -1,0 +1,23 @@
+- name: Install System Packages 1 (build-essential, cmake, etc)
+  become: true
+  apt:
+    name:
+      [
+        'curl',
+        'wget',
+        'gpg',
+        'pkg-config',
+        'apt-transport-https',
+        'python3-launchpadlib',
+        'git',
+        'build-essential',
+        'cmake',
+        'make',
+        'gcc',
+        'xclip',
+        'xsel',
+        'unzip'
+      ]
+  tags:
+    - install
+    - core

@@ -1,0 +1,35 @@
+- name: required libraries for Brave Brower
+  become: true
+  apt:
+    name: ['curl', 'apt-transport-https']
+  tags:
+    - code
+    - install
+
+- name: VSCode GPG signing key download
+  become: true
+  shell: curl -fSsL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /usr/share/keyrings/microsoft-archive-keyring.gpg > /dev/null
+  creates: /usr/share/keyrings/microsoft-archive-keyring.gpg
+  tags:
+    - code
+    - browsers
+    - install
+
+- name: VSCode PPA setting (apt source)
+  become: true
+  shell: echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-archive-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" | tee /etc/apt/sources.list.d/vscode.list
+  creates: /etc/apt/sources.list.d/vscode.list
+  tags:
+    - code
+    - browsers
+    - install
+
+- name: VSCode apt installation
+  become: true
+  apt:
+    update_cache: yes
+    name: ['code']
+  tags:
+    - code
+    - browsers
+    - install

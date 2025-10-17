@@ -1,0 +1,69 @@
+- name: Ensure .ssh directory exists.
+  file:
+    dest: "{{ SSH_DEST_FILE | dirname }}"
+    mode: 0700
+    state: directory
+  tags:
+    - dotfiles
+    - install
+    - ssh
+
+- name: Copy SSH private key
+  copy:
+    src: "{{ SSH_TARGET_FILE }}"
+    dest: "{{ SSH_DEST_FILE }}"
+    mode: 0600
+  tags:
+    - dotfiles
+    - install
+    - ssh
+
+- name: Copy SSH public key
+  copy:
+    src: "{{ SSH_TARGET_FILE }}.pub"
+    dest: "{{ SSH_DEST_FILE }}.pub"
+    mode: 0644
+  tags:
+    - dotfiles
+    - install
+    - ssh
+
+- name: Decrypt SSH private key
+  command: ansible-vault decrypt {{ SSH_FILE }}
+  args:
+    creates: "{{ SSH_FILE }}"  # This ensures the task runs only if the file exists
+  tags:
+    - dotfiles
+    - install
+    - ssh
+
+- name: Ensure authorized_keys file exists
+  file:
+    path: "{{ ansible_env.HOME }}/.ssh/authorized_keys"
+    state: touch
+    mode: '0600'
+  tags:
+    - dotfiles
+    - install
+    - ssh
+
+- name: Add SSH public key to authorized_keys file
+  authorized_key:
+    user: "{{ USERNAME }}"
+    state: present
+    key: "{{ lookup('file', '{{ SSH_DEST_FILE }}.pub' )}}"
+  with_fileglob:
+    - "{{ HOME_DIR }}/.ssh/*.pub"
+  tags:
+    - dotfiles
+    - install
+    - ssh
+
+- name: Create known_hosts
+  script: scripts/ssh-known-hosts.sh
+  args:
+    creates: "{{  SSH_DEST_FILE | dirname }}/known_hosts"
+  tags:
+    - dotfiles
+    - install
+    -ssh

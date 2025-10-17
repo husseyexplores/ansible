@@ -1,0 +1,20 @@
+# TODO: change install script from fnm to g
+- name: Install go version manager (g)
+  script: scripts/go-gvm.sh --skip-shell --install-dir {{ HOME_DIR }}/.g --release 1.8c.0
+  args:
+    creates: "{{ HOME_DIR }}/.g"
+  tags:
+    - golang
+    - install
+
+- name: Install go
+  shell: fnm use $(fnm ls-remote --lts | tail -n 1 | cut -d' ' -f 1 | sed -En "s/^v//p") --install-if-missing
+  tags:
+    - golang
+    - install
+
+- name: Print node version
+  shell: echo "$(go version)"
+  tags:
+    - golang
+    - install

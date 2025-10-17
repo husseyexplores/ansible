@@ -1,0 +1,21 @@
+- name: Fast Node Manager (fnm) install
+  shell: curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+  creates: "{{ lookup('env', 'HOME') }}/.local/share/fnm"
+  tags:
+    - fnm
+    - node
+    - install
+
+- name: Install nodejs LTS
+  shell: fnm use $(fnm ls-remote --lts | tail -n 1 | cut -d' ' -f 1 | sed -En "s/^v//p") --install-if-missing
+  tags:
+    - fnm
+    - node
+    - install
+
+- name: Print node version
+  shell: echo "nodejs version $(node --version)"
+  tags:
+    - fnm
+    - node
+    - install
